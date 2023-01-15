@@ -3,7 +3,7 @@
 
 
 def CONST_CAR_SPECIFICATIONS():
-    return "col-xs-2 listing-data "
+    return "col-xs-2 listing-data"
 
 
 def CONST_CAR_UNPREDICTABLE_SPECIFICATIONS():

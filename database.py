@@ -28,23 +28,25 @@ def insert_car(car):
     cursor = conn.cursor()
 
     cursor.execute("INSERT INTO Cars (Model, Link, "
-                    "Description, Kml, Kmt, Moth, "
-                    "Trailer, Kwh, Range) VALUES('%s', '%s', "
-                    "'%s', '%s','%s','%s','%s','%s','%s')" %
+                    "Description, Hk, Kml, Kmt, Moth, Trailer, Kwh, "
+                    "Range, Kms, Year, Price, Location) VALUES('%s', '%s', "
+                    "'%s', '%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')" %
                    (getattr(car, 'model'),
                     getattr(car, 'link'),
                     getattr(car, 'description'),
-                    #getattr(car, 'kms'),
-                    #getattr(car, 'year'),
+                    getattr(car, 'hk'),
                     getattr(car, 'kml'),
                     getattr(car, 'kmt'),
                     getattr(car, 'moth'),
                     getattr(car, 'trailer'),
-                    #getattr(car, 'location'),
-                    #getattr(car, 'price'),
                     getattr(car, 'kwh'),
-                    getattr(car, 'range')))
+                    getattr(car, 'range'),
+                    getattr(car, 'kms'),
+                    getattr(car, 'year'),
+                    getattr(car, 'price'),
+                    getattr(car, 'location')))
     conn.commit()
+
 
 
 def table_exists(table):
@@ -86,7 +88,7 @@ def create_cars_table():
               "Link CHAR(100), Description nvarchar(max), Kms INT, " + \
               "Year INT, Kml FLOAT(50), Kmt FLOAT(50), " + \
               "Moth CHAR(30), Trailer CHAR(30), Kwh INT, " + \
-              "Range INT)"
+              "Range INT, Location CHAR(100), Hk INT, Price INT)"
 
     conn.cursor().execute(command)
     conn.commit()

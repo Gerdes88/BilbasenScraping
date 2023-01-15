@@ -3,7 +3,7 @@ import constants.listing_description_types as descriptions_type
 import constants.listing_car_specifications as specifications_type
 import constants.listing_price_types as price_type
 import constants.listing_location_types as location_type
-from helpers import format_kml_str, format_kmt_str, format_price_str, format_kwh_str, format_range_str
+from helpers import format_kml_str, format_kmt_str, format_price_str, format_kwh_str, format_range_str, format_kms_str, format_hk_str
 from decimal import Decimal
 from collections import namedtuple
 from database import insert_brand
@@ -14,7 +14,7 @@ import database as db
 from constants.pagination_types import CONST_PAGINATION_LISTINGS_TYPE
 import constants.bilbasen_urls as url_types
 
-Car = namedtuple('Car', 'model link description hk kml kmt moth trailer kwh range')
+Car = namedtuple('Car', 'model link description hk kml kmt moth trailer kwh range kms year price location')
 
 
 def get_count_of_pages():
@@ -60,16 +60,14 @@ def extract_car_info(html_containers):
         if description is not "NO_DESCRIPTION" and description is not None and description is not "":
             description = description.replace("'", "''")
         description = description.strip()
-
+        #print(container.findAll("div", {"class": specifications_type.CONST_CAR_SPECIFICATIONS()}))
         specifications = container.findAll("div", {"class": specifications_type.CONST_CAR_SPECIFICATIONS()})
-        #print(type(specifications[0]))
-        #print(specifications[1])
         unpredictable_specifications = container.find("span", {
             "class": specifications_type.CONST_CAR_UNPREDICTABLE_SPECIFICATIONS()})
 
-        hk = unpredictable_specifications["data-hk"]
-        kms = int(specifications[1].string)
-        #year = int(specifications[2].string)
+        hk = format_hk_str(unpredictable_specifications["data-hk"])
+        kms = int(format_kms_str(specifications[1].string))
+        year = int(specifications[2].string)
         kml = format_kml_str(unpredictable_specifications["data-kml"])
         if kml is not "":
             kml = Decimal(kml)
@@ -80,12 +78,12 @@ def extract_car_info(html_containers):
 
         moth = unpredictable_specifications["data-moth"]
         trailer = unpredictable_specifications["data-trailer"]
-        #price = format_price_str(container.find("div", {"class", price_type.CONST_PRICE_DIV()}).string)
-        #location = container.find("div", {"class": location_type.CONST_LOCATION_DIV()}).string
+        price = format_price_str(container.find("div", {"class", price_type.CONST_PRICE_DIV()}).string)
+        location = container.find("div", {"class": location_type.CONST_LOCATION_DIV()}).string
         kwh = format_kwh_str(unpredictable_specifications["data-batterycapacity"])
         range = format_range_str(unpredictable_specifications["data-electricmotorrange"])
 
-        car = Car(model, link, description, hk, kml, kmt, moth, trailer, kwh, range)
+        car = Car(model, link, description, hk, kml, kmt, moth, trailer, kwh, range, kms, year, price, location)
         db.insert_car(car)
 
 
